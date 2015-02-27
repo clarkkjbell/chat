@@ -1,19 +1,18 @@
 SSE = require 'sse'
 Loophole = require 'loophole'
+http = require 'http'
 express = Loophole.allowUnsafeEval -> require 'express'
 bodyParser = Loophole.allowUnsafeEval -> require 'body-parser'
 
 module.exports =
 class ChatServer
-  constructor: (@port) ->
-
-  start: ->
+  constructor: ->
     channels = {}
 
-    app = express()
-    app.use(bodyParser.json())
+    @app = express()
+    @app.use(bodyParser.json())
 
-    app.get "/channels/:name/messages", (req, res) ->
+    @app.get "/channels/:name/messages", (req, res) ->
       {name} = req.params
 
       if req.headers.accept is 'text/event-stream'
@@ -25,15 +24,18 @@ class ChatServer
         res.writeHead(200, 'Content-Type': 'text/plain')
         res.end('okay')
 
-    app.post "/channels/:name/messages", (req, res) ->
+    @app.post "/channels/:name/messages", (req, res) ->
       {name} = req.params
-      console.log "POSTING", req.body
       channels[name]?.createMessage(req.body)
       res.writeHead(200, 'Content-Type': 'text/plain')
       res.end('okay')
 
-    new Promise (resolve, reject) =>
-      app.listen(@port, resolve)
+  listen: (port) ->
+    @server = http.createServer(@app)
+    new Promise (resolve) => @server.listen(port, resolve)
+
+  close: ->
+    new Promise (resolve) => @server.close(resolve)
 
 class ChannelServer
   constructor: (@name) ->
