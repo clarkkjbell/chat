@@ -4,5 +4,15 @@
 // for a full listing of what's available.
 @import "ui-variables";
 
-.chat {
+chat-panel {
+  display: block;
+  position: relative;
+  width: 300px;
+  height: 100%;
+
+  atom-text-editor {
+    position: absolute;
+    bottom: 7px; // HACK: This should be 0px but there's something weird with atom-text-editor
+    width: 100%;
+  }
 }

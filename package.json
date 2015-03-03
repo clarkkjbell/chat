@@ -1,11 +1,8 @@
 {
   "name": "chat",
-  "main": "./lib/chat",
+  "main": "./lib/main",
   "version": "0.0.0",
   "description": "A short description of your package",
-  "activationCommands": {
-    "atom-workspace": "chat:toggle"
-  },
   "repository": "https://github.com/atom/chat",
   "license": "MIT",
   "engines": {
